@@ -1,52 +1,68 @@
-
 # Import bibliotek
-
 from datetime import date
 from enum import Enum
 import numpy as np
 import csv
+import argparse
 
-#Ustawienie seeda
+# Ustawienie seeda
 np.random.seed(69)
 
 ### USTAWIENIE PARAMETRÓW
 
-#Ilość faktów do wygenerowania:
-ilosc_danych=1000
+# --- OPCJA 1: RĘCZNA KONFIGURACJA ---
+# Zakomentuj ten blok i odkomentuj Opcję 2, jeśli wolisz zmieniać dane w CLI.
 
-#Przedziały dat:
+ilosc_danych = 1000
 min_rok = 2026
 max_rok = 2026
 min_miesiac = 3
 max_miesiac = 4
-
-#Szansa na rabat
 rabat_szansa = 0.25
 
+
+# --- OPCJA 2: KONFIGURACJA PRZEZ KONSOLĘ (CLI) ---
+
+'''
+parser = argparse.ArgumentParser(description="Generator syntetycznych danych sprzedażowych.")
+parser.add_argument('--ilosc', type=int, default=1000, help='Ilość faktów do wygenerowania')
+parser.add_argument('--min-rok', type=int, default=2026, help='Minimalny rok')
+parser.add_argument('--max-rok', type=int, default=2026, help='Maksymalny rok')
+parser.add_argument('--min-miesiac', type=int, default=3, help='Minimalny miesiąc w roku początkowym')
+parser.add_argument('--max-miesiac', type=int, default=4, help='Maksymalny miesiąc w roku końcowym')
+parser.add_argument('--rabat-szansa', type=float, default=0.25, help='Prawdopodobieństwo wystąpienia rabatu (0.0 - 1.0)')
+
+args = parser.parse_args()
+
+ilosc_danych = args.ilosc
+min_rok = args.min_rok
+max_rok = args.max_rok
+min_miesiac = args.min_miesiac
+max_miesiac = args.max_miesiac
+rabat_szansa = args.rabat_szansa
+'''
 
 ############ Funkcjonalność
 
 assert min_rok <= max_rok
-assert min_miesiac <= max_miesiac
-
+if min_rok == max_rok:
+    assert min_miesiac <= max_miesiac
 
 # Definicja klasy produktu oraz listy produktów
-
 Products = []
+
 
 class Product:
     def __init__(self, name, subcategory, value):
-        self.id = id
         self.name = name
         self.subcategory = subcategory
         self.value = value
         Products.append(self)
 
 
-#Definicja subkaterogii
+# Definicja subkaterogii
 class SubCategory(Enum):
-
-    #Jedzenie
+    # Jedzenie
     Produkty_Mleczne = 1
     Slodycze = 2
     Pieczywo = 3
@@ -55,32 +71,28 @@ class SubCategory(Enum):
     Mieso = 6
     Owoce = 7
     Warzywa = 8
-
-    #Higieniczne
+    # Higieniczne
     Toaleta = 9
     Higiena_Ciala = 10
-
-    #Sprzatajace
+    # Sprzatajace
     Chemia = 11
     Czyszczenie = 12
-
-    #zabawki
+    # Zabawki
     Metalowe = 13
     Plastikowe = 14
-
-    #Elektronika
+    # Elektronika
     Komputer = 15
     Transport = 16
 
-#Definicja metod płatnosci
 
+# Definicja metod płatnosci
 class Metody(Enum):
     GOTOWKA = 1
     KARTA = 2
     BLIK = 3
 
-#Definicja lokalizacji
 
+# Definicja lokalizacji
 class Lokalizacje(Enum):
     Warszawa = 1
     Wroclaw = 2
@@ -89,8 +101,7 @@ class Lokalizacje(Enum):
     Zielona_Gora = 5
 
 
-#Definicja kategorii
-
+# Definicja kategorii
 class Category(Enum):
     Produkty_Spozywcze = 1
     Produkty_Higieniczne = 2
@@ -104,22 +115,19 @@ Bulka Kajzerka, Czekolada Mleczna 100g, Woda Niegazowana 2L, Cukier 1kg, Ser Gou
 Dzem 280g, Banany 1kg, Jablka 1kg, Cytryny 1kg, Pomarancze 1kg, Poledwica sopocka 450g, Parowki 250g, Kielbasa 1kg, Kurczak 1kg, 
 Ziemniaki 1kg, Pomidory 1kg, Papryka 1kg, Pieczarki 1kg, Papier Toaletowy op. 8 rolek, Proszek do prania 400g, Plyn do zmywania naczyn 1L,
  Pasta do zebow 125 ml, Mydlo kostka 100g, Plyn do czyszczenia toalet 750 ml, Szampon 250ml, Recznik papierowy op. 2 rolki, 
- 
+
 Google search dla następujących produktów Przepychacz, Chusteczki nawilzane 72 szt., Chipsy 110g, Samochod zabawkowy, 
 Tor samochodowy, Pociag zabawkowy, Figurka Dinozaura, Lalka, Hulajnoga elektrycza,
 
 Dane produktów Myszka i klawiatura: sklep x-kom, stan na 19.04.2026 
-
-
-
 '''
 
-#Definicja produktów
-Mleko = Product("Mleko", SubCategory.Produkty_Mleczne,  4.49)
+# Definicja produktów
+Mleko = Product("Mleko", SubCategory.Produkty_Mleczne, 4.49)
 Chleb = Product("Chleb 500g", SubCategory.Pieczywo, 2.29)
 Bulka = Product("Bulka Kajzerka", SubCategory.Pieczywo, 0.31)
 Czekolada = Product("Czekolada Mleczna 100g", SubCategory.Slodycze, 8.88)
-Wooda = Product("Woda Niegazowana 2L", SubCategory.Napoje, 3.85)
+Woda = Product("Woda Niegazowana 2L", SubCategory.Napoje, 3.85)
 Cukier = Product("Cukier 1kg", SubCategory.Slodycze, 2.69)
 Ser = Product("Ser Gouda 200g", SubCategory.Produkty_Mleczne, 4.80)
 Sok = Product("Sok Pomaranczowy 1L", SubCategory.Napoje, 7.99)
@@ -153,91 +161,68 @@ Tor = Product("Tor samochodowy", SubCategory.Plastikowe, 72.57)
 Pociag = Product("Pociag zabawkowy", SubCategory.Metalowe, 111.00)
 Figurka = Product("Figurka Dinozaura", SubCategory.Plastikowe, 49.99)
 Hulajnoga = Product("Hulajnoga elektrycza", SubCategory.Transport, 749.00)
-Myszka= Product("Myszka komputerowa", SubCategory.Komputer, 139.00)
-Klawiatura=Product("Klawiatura komputerowa", SubCategory.Komputer, 219.00)
+Myszka = Product("Myszka komputerowa", SubCategory.Komputer, 139.00)
+Klawiatura = Product("Klawiatura komputerowa", SubCategory.Komputer, 219.00)
 
-
-#Przypisanie id podkategorii do kategorii
-#Kategoria produktów spozywczych
+# Przypisanie id podkategorii do kategorii
 kategorie2 = {k: Category.Produkty_Spozywcze for k in range(1, 9)}
-
-#Kategoria produktów higienicznych
 kategorie2.update({z: Category.Produkty_Higieniczne for z in range(9, 11)})
-
-#Kategoria produktów sprzątających
 kategorie2.update({z: Category.Produkty_Sprzatajace for z in range(11, 13)})
-
-#Kategoria zabawek
 kategorie2.update({z: Category.Zabawki for z in range(13, 15)})
-
-#Kategoria elektroniki
 kategorie2.update({z: Category.Elektronika for z in range(15, 17)})
 
-
-#Przypisanie produktów do ich kategorii
-Produkty_Kategoryzowane=[[], [], [], [], []]
-
+# Przypisanie produktów do ich kategorii
+Produkty_Kategoryzowane = [[], [], [], [], []]
 for produkt in Products:
-    Produkty_Kategoryzowane[kategorie2[produkt.subcategory.value].value-1].append(produkt)
+    Produkty_Kategoryzowane[kategorie2[produkt.subcategory.value].value - 1].append(produkt)
 
-#Zdefiniowanie prawdopodobieństw metod płatności
+# Zdefiniowanie prawdopodobieństw
 Platnosci = [Metody.GOTOWKA, Metody.KARTA, Metody.BLIK]
 Platnosci_Weights = [0.7, 0.2, 0.1]
 
-#Zdefiniowanie prawdopodobieństw każdej z kategorii
-kategorie = [Category.Produkty_Spozywcze, Category.Produkty_Higieniczne, Category.Produkty_Sprzatajace, Category.Zabawki, Category.Elektronika]
+kategorie = [Category.Produkty_Spozywcze, Category.Produkty_Higieniczne, Category.Produkty_Sprzatajace,
+             Category.Zabawki, Category.Elektronika]
 kategorie_weights = [0.5, 0.19, 0.2, 0.1, 0.01]
 
-#Zdefiniowanie prawdopodobieństw każdej z lokalizacjii
-lokalizajce = [Lokalizacje.Wroclaw, Lokalizacje.Zielona_Gora, Lokalizacje.Warszawa, Lokalizacje.Bydgoszcz, Lokalizacje.Krakow]
+lokalizacje = [Lokalizacje.Wroclaw, Lokalizacje.Zielona_Gora, Lokalizacje.Warszawa, Lokalizacje.Bydgoszcz,
+               Lokalizacje.Krakow]
 lokalizacje_weights = [0.3, 0.1, 0.2, 0.15, 0.25]
 
 
-
-
-#Wygenerowania przedziałów generowanych dat
+# Wygenerowania przedziałów generowanych dat
 def generacja_przedzialu(minimum, maximum):
     return [i for i in range(minimum, maximum + 1)]
 
-lata=generacja_przedzialu(min_rok, max_rok)
-miesiace=generacja_przedzialu(min_miesiac, max_miesiac)
-dnie=generacja_przedzialu(1, 31)
-godziny=generacja_przedzialu(8, 20)
-minuty_sekundy=generacja_przedzialu(0, 60)
 
-#Sprawdzenie roku przestępnego:
+lata = generacja_przedzialu(min_rok, max_rok)
+dnie = generacja_przedzialu(1, 31)
+
+
+# Sprawdzenie roku przestępnego:
 def czy_przestepny(rok):
-    przestepny = False
-    if rok%4==0:
-        if rok%100==0:
-            if rok%400==0:
-                przestepny = True
-        else:
-            przestepny = True
-    return przestepny
+    return rok % 4 == 0 and (rok % 100 != 0 or rok % 400 == 0)
 
-#Zdefiniowanie poszczególnych miesięcy
+
 miesiace_30dni = [4, 6, 9, 11]
 
-
-#Zdefiniowanie rabatów oraz ich prawdopodobieństw
+# Zdefiniowanie rabatów oraz ich prawdopodobieństw
 rabaty = [0.05, 0.10, 0.15, 0.20, 0.25]
 rabaty_weights = [0.6, 0.2, 0.1, 0.08, 0.02]
 
-
-#Maksymalne ilości dla każdej kategorii
+# Maksymalne ilości dla każdej kategorii
 maks_ilosci = [4, 2, 2, 1, 1]
 
-#Zapisywanie dat oraz faktów
+# Zapisywanie dat oraz faktów
 daty = []
 fakty = []
 
-#Funkcja generowania losowego
+
+# Funkcja generowania losowego
 def generuj_losowy(przedzial, prawdopodobienstwa=None):
     return np.random.choice(przedzial, p=prawdopodobienstwa) if prawdopodobienstwa else np.random.choice(przedzial)
 
-#Funkcja generowania losowego dnia
 
+# Funkcja generowania losowego dnia
 def generuj_dzien(miesiac, rok):
     if miesiac == 2:
         if czy_przestepny(rok):
@@ -250,218 +235,152 @@ def generuj_dzien(miesiac, rok):
         dzien = generuj_losowy(dnie)
     return dzien
 
-def dodaj_0(argument):
-    argument=str(argument)
-    return "0"+argument if len(argument)==1 else argument
-#Gene
 
+def dodaj_0(argument):
+    argument = str(argument)
+    return "0" + argument if len(argument) == 1 else argument
+
+
+# Generowanie faktów
 for i in range(ilosc_danych):
     fakty.append([])
-    #Wylosowanie kategorii
+
     kategoria = generuj_losowy(kategorie, kategorie_weights)
-
-    #Wylosowanie produktu
-    produkt = generuj_losowy(Produkty_Kategoryzowane[kategoria.value-1])
-
-    #Wylosowanie metody płatności
+    produkt = generuj_losowy(Produkty_Kategoryzowane[kategoria.value - 1])
     platnosc = generuj_losowy(Platnosci, Platnosci_Weights)
-
-    #Wylosowanie lokalizacji
-    lokalizacja = generuj_losowy(lokalizajce, lokalizacje_weights)
+    lokalizacja = generuj_losowy(lokalizacje, lokalizacje_weights)
 
     # Generacja daty
     rok = generuj_losowy(lata)
-    miesiac= generuj_losowy(miesiace)
+
+    # Ustalenie zakresu miesięcy w zależności od roku
+    if min_rok == max_rok:
+        dostepne_miesiace = generacja_przedzialu(min_miesiac, max_miesiac)
+    elif rok == min_rok:
+        dostepne_miesiace = generacja_przedzialu(min_miesiac, 12)
+    elif rok == max_rok:
+        dostepne_miesiace = generacja_przedzialu(1, max_miesiac)
+    else:
+        dostepne_miesiace = generacja_przedzialu(1, 12)
+
+    miesiac = generuj_losowy(dostepne_miesiace)
     dzien = generuj_dzien(miesiac, rok)
-    miesiac=dodaj_0(miesiac)
-    dzien=dodaj_0(dzien)
-    data_=int(f"{rok}{miesiac}{dzien}")
 
-    #Losowanie rabatu
-    czy_rabat = np.random.choice([0, 1], p=[1-rabat_szansa, rabat_szansa])
-    if czy_rabat:
-        rabat = np.random.choice(rabaty, p=rabaty_weights)
-    else: rabat = 0
+    miesiac_str = dodaj_0(miesiac)
+    dzien_str = dodaj_0(dzien)
+    data_ = int(f"{rok}{miesiac_str}{dzien_str}")
 
-    #Losowanie ilości
-    maks_ilosc = maks_ilosci[kategoria.value-1]
-    zbior_ilosc = [i for i in range(maks_ilosc+1)]
-    if maks_ilosc>1:
-        if maks_ilosc==4:
-            ilosc_weights=[0.7, 0.2, 0.08, 0.02]
-        else: ilosc_weights=[0.8, 0.2]
-        ilosc = generuj_losowy([i for i in range(1, maks_ilosc+1)], ilosc_weights)
-    else: ilosc = 1
+    czy_rabat = np.random.choice([0, 1], p=[1 - rabat_szansa, rabat_szansa])
+    rabat = np.random.choice(rabaty, p=rabaty_weights) if czy_rabat else 0
+
+    maks_ilosc = maks_ilosci[kategoria.value - 1]
+    if maks_ilosc > 1:
+        if maks_ilosc == 4:
+            ilosc_weights = [0.7, 0.2, 0.08, 0.02]
+        else:
+            ilosc_weights = [0.8, 0.2]
+        ilosc = generuj_losowy([i for i in range(1, maks_ilosc + 1)], ilosc_weights)
+    else:
+        ilosc = 1
+
     ilosc = int(ilosc)
 
-    #Kalkulacja ceny
-    total_cena = float(produkt.value*ilosc - produkt.value*ilosc*rabat)
+    # Bezpieczna kalkulacja ceny
+    total_cena = round(float(produkt.value * ilosc - produkt.value * ilosc * rabat), 2)
 
-    #Dodanie id produktu do tabeli
-    fakty[i].append((Products.index(produkt))+1)
-
-    #Dodanie lokalizacji do tabeli
+    fakty[i].append(Products.index(produkt) + 1)
     fakty[i].append(lokalizacja.value)
-
-    #Dodanie daty do tabeli faktów
     fakty[i].append(data_)
 
-    #Dodanie daty do tabeli dat
     if data_ not in daty:
         daty.append(data_)
 
-    #Dodanie metody płatności do tabeli
     fakty[i].append(platnosc.value)
-
-    #Dodanie ceny końcowej do tabeli
     fakty[i].append(f"{total_cena:.2f}")
-
-    #Dodanie ilości do tabeli
     fakty[i].append(ilosc)
+    fakty[i].append(f"{int(rabat * 100)}%")  # Zmiana na int, by unikać zapisów typu "5.0%"
 
-    #Dodanie rabatu do tabeli
-    fakty[i].append(f"{rabat*100}%")
-
-
-#Sortowanie tabeli faktów według dat
 fakty.sort(key=lambda x: x[2])
-
-#Sortowanie tabeli dat
 daty.sort()
 
-
-#Zapisywanie danych do tabeli faktów
+# Zapis do plików CSV (Dodano kodowanie UTF-8)
 fakty_labels = ["Produkt_ID", "Lokalizacja_ID", "Data", "Platnosc_ID", "Wartosc", "Ilosc", "Rabat"]
-
-with open('Fakty.csv', 'w', newline='') as f:
+with open('Fakty.csv', 'w', newline='', encoding='utf-8') as f:
     writer = csv.writer(f)
     writer.writerow(fakty_labels)
     writer.writerows(fakty)
 
-
-#Zapisywanie danych do tabeli produktów
-
 produkty_row = ["ID", "Nazwa", "Podkategoria", "Kategoria", "Cena Bazowa"]
 produkty = []
 for i, product in enumerate(Products):
-    produkty.append([])
-    produkty[i].append(i+1)
-    produkty[i].append(product.name)
-    produkty[i].append(product.subcategory.name)
-    produkty[i].append(kategorie2[product.subcategory.value].name)
-    produkty[i].append(product.value)
+    produkty.append(
+        [i + 1, product.name, product.subcategory.name, kategorie2[product.subcategory.value].name, product.value])
 
-
-with open('Produkty.csv', 'w', newline='') as f:
+with open('Produkty.csv', 'w', newline='', encoding='utf-8') as f:
     writer = csv.writer(f)
     writer.writerow(produkty_row)
     writer.writerows(produkty)
 
-#Zapisywanie danych do tabeli lokalizacji
-
 lokalizacje_row = ["ID", "Nazwa"]
-lokalizacje = [Lokalizacje.Warszawa, Lokalizacje.Wroclaw, Lokalizacje.Krakow, Lokalizacje.Bydgoszcz, Lokalizacje.Zielona_Gora]
-lokalizacje_tabela = []
+lokalizacje_tabela = [[loc.value, loc.name.replace("_", " ")] for loc in
+                      [Lokalizacje.Warszawa, Lokalizacje.Wroclaw, Lokalizacje.Krakow, Lokalizacje.Bydgoszcz,
+                       Lokalizacje.Zielona_Gora]]
 
-for i, lokalizacja in enumerate(lokalizacje):
-    lokalizacje_tabela.append([])
-    lokalizacje_tabela[i].append(lokalizacja.value)
-    lokalizacje_tabela[i].append(lokalizacja.name.replace("_", " "))
-
-
-with open('Lokalizacje.csv', 'w', newline='') as f:
+with open('Lokalizacje.csv', 'w', newline='', encoding='utf-8') as f:
     writer = csv.writer(f)
     writer.writerow(lokalizacje_row)
     writer.writerows(lokalizacje_tabela)
 
-
-#Zapisywanie danych do tabeli metod płatności
-
-platnosci = [Metody.GOTOWKA, Metody.KARTA, Metody.BLIK]
 platnosci_row = ["ID", "Nazwa"]
-platnosci_tabela = []
+platnosci_tabela = [[p.value, p.name] for p in Platnosci]
 
-for i, platnosci in enumerate(platnosci):
-    platnosci_tabela.append([])
-    platnosci_tabela[i].append(platnosci.value)
-    platnosci_tabela[i].append(platnosci.name)
-
-with open('Platnosci.csv', 'w', newline='') as f:
+with open('Platnosci.csv', 'w', newline='', encoding='utf-8') as f:
     writer = csv.writer(f)
     writer.writerow(platnosci_row)
     writer.writerows(platnosci_tabela)
 
-
-
-#Zapisywanie danych do tabeli dat
-
 daty_row = ["ID_Daty", "Data", "Rok", "Miesiac", "Dzien", "Dzien Tygodnia"]
 daty_tabela = []
+dnie_tyg = {0: "Poniedzialek", 1: "Wtorek", 2: "Sroda", 3: "Czwartek", 4: "Piatek", 5: "Sobota", 6: "Niedziela"}
 
-dnie = {
-    0: "Poniedzialek",
-    1: "Wtorek",
-    2: "Sroda",
-    3: "Czwartek",
-    4: "Piatek",
-    5: "Sobota",
-    6: "Niedziela"
-}
-
-#Kalkulowanie dnia tygodnia
 
 def dzien_tygodnia(rok, miesiac, dzien):
-    return dnie[date.weekday(date(int(rok), int(miesiac), int(dzien)))]
+    return dnie_tyg[date.weekday(date(int(rok), int(miesiac), int(dzien)))]
 
-for i, _ in enumerate(daty):
-    daty_tabela.append([])
-    data_converted = str(_)
-    data_s = data_converted[:4]+"-"+data_converted[4:6]+"-"+data_converted[6:]
-    daty_tabela[i].append(_)
-    daty_tabela[i].append(data_s)
+
+for i, data_val in enumerate(daty):
+    data_converted = str(data_val)
+    data_s = data_converted[:4] + "-" + data_converted[4:6] + "-" + data_converted[6:]
     rok, miesiac, dzien = data_s.split("-")
-    daty_tabela[i].append(rok)
-    daty_tabela[i].append(miesiac)
-    daty_tabela[i].append(dzien)
-    daty_tabela[i].append(dzien_tygodnia(rok, miesiac, dzien))
+    daty_tabela.append([data_val, data_s, rok, miesiac, dzien, dzien_tygodnia(rok, miesiac, dzien)])
 
-with open('daty.csv', 'w', newline='') as f:
+with open('daty.csv', 'w', newline='', encoding='utf-8') as f:
     writer = csv.writer(f)
     writer.writerow(daty_row)
     writer.writerows(daty_tabela)
 
-
-#Przeliczenie wygenerowanych danych produktów
 product_count = {}
 subcategory_count = {}
 category_count = {}
 
-#Funkcja na przeliczanie produktów w formie słownika
+
 def updatedictionary(dictionary, key):
-    if dictionary.get(key):
-        dictionary[key]+=1
-    else: dictionary[key]=1
+    dictionary[key] = dictionary.get(key, 0) + 1
 
 
 for fakt in fakty:
-    produkt = Products[fakt[0]-1]
+    produkt = Products[fakt[0] - 1]
     updatedictionary(product_count, produkt.name)
     updatedictionary(subcategory_count, produkt.subcategory.name)
     updatedictionary(category_count, kategorie2[produkt.subcategory.value].name)
 
-#Wyświetlenie ilości produktów
-
-dane_wygenerowane=[]
+dane_wygenerowane = []
 dane_rows = ["Dana", "Ilosc"]
-for k, v in product_count.items():
-    dane_wygenerowane.append([k, v])
-for k, v in subcategory_count.items():
-    dane_wygenerowane.append([k, v])
-for k, v in category_count.items():
-    dane_wygenerowane.append([k, v])
+dane_wygenerowane.extend([[k, v] for k, v in product_count.items()])
+dane_wygenerowane.extend([[k, v] for k, v in subcategory_count.items()])
+dane_wygenerowane.extend([[k, v] for k, v in category_count.items()])
 
-with open('dane.csv', 'w', newline='') as f:
+with open('dane.csv', 'w', newline='', encoding='utf-8') as f:
     writer = csv.writer(f)
     writer.writerow(dane_rows)
     writer.writerows(dane_wygenerowane)
-

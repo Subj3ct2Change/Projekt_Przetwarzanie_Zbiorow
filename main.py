@@ -3,7 +3,6 @@ from datetime import date
 from enum import Enum
 import numpy as np
 import csv
-import argparse
 
 # Ustawienie seeda
 np.random.seed(69)
@@ -19,28 +18,6 @@ max_rok = 2026
 min_miesiac = 3
 max_miesiac = 4
 rabat_szansa = 0.25
-
-
-# --- OPCJA 2: KONFIGURACJA PRZEZ KONSOLĘ (CLI) ---
-
-'''
-parser = argparse.ArgumentParser(description="Generator syntetycznych danych sprzedażowych.")
-parser.add_argument('--ilosc', type=int, default=1000, help='Ilość faktów do wygenerowania')
-parser.add_argument('--min-rok', type=int, default=2026, help='Minimalny rok')
-parser.add_argument('--max-rok', type=int, default=2026, help='Maksymalny rok')
-parser.add_argument('--min-miesiac', type=int, default=3, help='Minimalny miesiąc w roku początkowym')
-parser.add_argument('--max-miesiac', type=int, default=4, help='Maksymalny miesiąc w roku końcowym')
-parser.add_argument('--rabat-szansa', type=float, default=0.25, help='Prawdopodobieństwo wystąpienia rabatu (0.0 - 1.0)')
-
-args = parser.parse_args()
-
-ilosc_danych = args.ilosc
-min_rok = args.min_rok
-max_rok = args.max_rok
-min_miesiac = args.min_miesiac
-max_miesiac = args.max_miesiac
-rabat_szansa = args.rabat_szansa
-'''
 
 ############ Funkcjonalność
 

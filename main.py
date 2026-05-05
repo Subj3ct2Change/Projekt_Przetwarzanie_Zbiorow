@@ -9,9 +9,6 @@ np.random.seed(69)
 
 ### USTAWIENIE PARAMETRÓW
 
-# --- OPCJA 1: RĘCZNA KONFIGURACJA ---
-# Zakomentuj ten blok i odkomentuj Opcję 2, jeśli wolisz zmieniać dane w CLI.
-
 ilosc_danych = 1000
 min_rok = 2026
 max_rok = 2026

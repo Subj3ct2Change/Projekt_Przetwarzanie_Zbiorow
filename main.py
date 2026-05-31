@@ -272,7 +272,7 @@ for i in range(ilosc_danych):
     fakty[i].append(platnosc.value)
     fakty[i].append(f"{total_cena:.2f}")
     fakty[i].append(ilosc)
-    fakty[i].append(f"{int(rabat * 100)}%")  # Zmiana na int, by unikać zapisów typu "5.0%"
+    fakty[i].append(f"{rabat:.2f}")  # Zmiana na int, by unikać zapisów typu "5.0%"
 
 fakty.sort(key=lambda x: x[2])
 daty.sort()

@@ -1148,14 +1148,14 @@ INSERT INTO `produkty` (`id`, `Nazwa`, `Podkategoria`, `Kategoria`, `Cena`) VALU
 --
 -- Indeksy dla zrzutów tabel
 --
-
 --
 -- Indeksy dla tabeli `fakty`
 --
 ALTER TABLE `fakty`
   ADD KEY `Produkt_ID` (`Produkt_ID`),
   ADD KEY `Lokalizacja_ID` (`Lokalizacja_ID`),
-  ADD KEY `Platnosc_ID` (`Platnosc_ID`);
+  ADD KEY `Platnosc_ID` (`Platnosc_ID`),
+  ADD KEY `Data_faktu` (`Data_faktu`);
 
 --
 -- Indeksy dla tabeli `lokalizacje`
@@ -1197,6 +1197,25 @@ ALTER TABLE `platnosci`
 ALTER TABLE `produkty`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
+-- --------------------------------------------------------
+-- Struktura tabeli dla wymiaru czasu (dodana manualnie)
+-- --------------------------------------------------------
+
+CREATE TABLE `daty` (
+  `ID_Daty` int(11) NOT NULL,
+  `Data` date NOT NULL,
+  `Rok` int(4) NOT NULL,
+  `Miesiac` int(2) NOT NULL,
+  `Dzien` int(2) NOT NULL,
+  `DzienTygodnia` varchar(16) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Indeksy dla tabeli `daty`
+--
+ALTER TABLE `daty`
+  ADD PRIMARY KEY (`ID_Daty`);
+
 --
 -- Constraints for dumped tables
 --
@@ -1205,9 +1224,11 @@ ALTER TABLE `produkty`
 -- Constraints for table `fakty`
 --
 ALTER TABLE `fakty`
-  ADD CONSTRAINT `fakty_ibfk_1` FOREIGN KEY (`Produkt_ID`) REFERENCES `produkty` (`ID`),
+  ADD CONSTRAINT `fakty_ibfk_1` FOREIGN KEY (`Produkt_ID`) REFERENCES `produkty` (`id`),
   ADD CONSTRAINT `fakty_ibfk_2` FOREIGN KEY (`Lokalizacja_ID`) REFERENCES `lokalizacje` (`id`),
-  ADD CONSTRAINT `fakty_ibfk_3` FOREIGN KEY (`Platnosc_ID`) REFERENCES `platnosci` (`id`);
+  ADD CONSTRAINT `fakty_ibfk_3` FOREIGN KEY (`Platnosc_ID`) REFERENCES `platnosci` (`id`),
+  ADD CONSTRAINT `fakty_ibfk_4` FOREIGN KEY (`Data_faktu`) REFERENCES `daty` (`ID_Daty`);
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

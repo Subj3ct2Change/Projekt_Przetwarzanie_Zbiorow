@@ -30,7 +30,7 @@ CREATE TABLE factSprzedaze (
 );
 
 -- Zaladowanie danych do tabeli faktów
-LOAD DATA INFILE 'M:/MySQL/MySQLServerData/Uploads/Fakty.csv'
+LOAD DATA INFILE 'C:/ProgramData/MySQLServer/Uploads/Fakty.csv'
 INTO TABLE factSprzedaze
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
@@ -49,7 +49,7 @@ CREATE TABLE dimProdukt (
 );
 
 
-LOAD DATA INFILE 'M:/MySQL/MySQLServerData/Uploads/Produkty.csv'
+LOAD DATA INFILE 'C:/ProgramData/MySQLServer/Uploads/Produkty.csv'
 INTO TABLE dimProdukt
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
@@ -64,7 +64,7 @@ CREATE TABLE dimLokalizacja (
 	Nazwa_Lokalizacji VARCHAR(48) NOT NULL
 );
 
-LOAD DATA INFILE 'M:/MySQL/MySQLServerData/Uploads/Lokalizacje.csv'
+LOAD DATA INFILE 'C:/ProgramData/MySQLServer/Uploads/Lokalizacje.csv'
 INTO TABLE dimLokalizacja
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
@@ -83,7 +83,7 @@ CREATE TABLE dimData (
     DzienTygodnia VARCHAR(15) NOT NULL
 );
 
-LOAD DATA INFILE 'M:/MySQL/MySQLServerData/Uploads/daty.csv'
+LOAD DATA INFILE 'C:/ProgramData/MySQLServer/Uploads/daty.csv'
 INTO TABLE dimData
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
@@ -98,7 +98,7 @@ CREATE TABLE dimPlatnosc (
     Nazwa_Metody VARCHAR(12) NOT NULL
 );
 
-LOAD DATA INFILE 'M:/MySQL/MySQLServerData/Uploads/Platnosci.csv'
+LOAD DATA INFILE 'C:/ProgramData/MySQLServer/Uploads/Platnosci.csv'
 INTO TABLE dimPlatnosc
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"' LINES TERMINATED BY '\r\n'

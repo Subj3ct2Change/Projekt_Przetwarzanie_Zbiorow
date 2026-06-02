@@ -21,6 +21,7 @@ except FileExistsError:
     print("Folder juz istnieje")
 
 
+
 engine = create_engine(f"mysql+pymysql://{user}:{password}@{host}/{db_name}")
 
 
@@ -70,6 +71,31 @@ def get_category_revenue_chart(conn):
     ax.invert_yaxis()
 
     plt.savefig(f"{wykresy_dir}/Wykres-Kategorii-Przychod.png")
+    print("Wygenerowano wykres kategorii.")
+
+def get_subcategory_revenue_chart(conn):
+    categories = []
+    revenue = []
+
+    query = text("""
+        SELECT p.podKategoria, SUM(f.Wartosc) 
+        FROM factsprzedaze f
+        JOIN dimprodukt p ON f.Produkt_ID = p.Produkt_ID 
+        GROUP BY p.podKategoria
+        ORDER BY SUM(f.Wartosc) DESC
+    """)
+
+    for row in conn.execute(query):
+        categories.append(row[0].replace("_", " "))
+        revenue.append(float(row[1]))
+
+    fig, ax = plt.subplots(figsize=(8, 4), layout='constrained')
+    ax.barh(categories, revenue, color='skyblue')
+    ax.set_xlabel('Przychód (zł)')
+    ax.set_title('Całkowity przychód według kategorii produktów')
+    ax.invert_yaxis()
+
+    plt.savefig(f"{wykresy_dir}/Wykres-Podkategorii-Przychod.png")
     print("Wygenerowano wykres kategorii.")
 
 
@@ -266,7 +292,7 @@ def most_sold_products(conn, amount=10):
     for row in conn.execute(query):
         produkty.append(row[0])
         values.append(row[1])
-    ax.barh(produkty, values)
+    ax.barh(produkty, values, color='skyblue')
     ax.set_title(f"Najczesciej sprzedajace sie {amount} produktow")
     ax.set_ylabel('Produkt')
     ax.set_xlabel("Ilosc sprzedanych jednostek")
@@ -284,7 +310,7 @@ def highest_income_products(conn, amount=10):
     for row in conn.execute(query):
         produkty.append(row[0])
         values.append(row[1])
-    ax.barh(produkty, values)
+    ax.barh(produkty, values, color='skyblue')
     ax.set_title(f"{amount} najbardziej dochodowych produktow")
     ax.set_ylabel('Produkt')
     ax.set_xlabel("Zysk")
@@ -296,7 +322,7 @@ if __name__ == "__main__":
     with engine.connect() as conn:
         get_payment_methods_chart(conn)
         get_category_revenue_chart(conn)
-        get_discount_impact_chart(conn)
+        get_subcategory_revenue_chart(conn)
         get_sales_with_discounts(conn)
         get_store_revenue_chart(1, conn)
         get_product_revenue_charts(1, conn)

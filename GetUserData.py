@@ -1,4 +1,4 @@
-def getuserdata():
+def get_user_data():
     with open(file="DaneLogowania/Data.txt", mode="r") as f:
         user = f.readline().replace("\n", "")
         passwd = f.readline().replace("\n", "")

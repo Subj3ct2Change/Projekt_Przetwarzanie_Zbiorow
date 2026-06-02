@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from sqlalchemy.types import INTEGER, DECIMAL, VARCHAR
 
-from GetUserData import getuserdata
+from GetUserData import get_user_data
 from sqlalchemy import create_engine, text, table, MetaData, Table, Column, Integer, null
 
 folder_dir = "WygenerowaneDane"
@@ -20,7 +20,7 @@ for file in required:
     if file not in files:
         raise Exception(f"Dane do zaladowania nie zostaly znalezione: {file}")
 
-user, password, host, port, db_name = getuserdata()
+user, password, host, port, db_name = get_user_data()
 
 server_engine = create_engine(f"mysql+pymysql://{user}:{password}@{host}/")
 

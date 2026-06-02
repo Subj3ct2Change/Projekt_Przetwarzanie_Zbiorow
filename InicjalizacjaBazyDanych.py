@@ -3,7 +3,7 @@ import pandas as pd
 from sqlalchemy.types import INTEGER, DECIMAL, VARCHAR
 
 from GetUserData import get_user_data
-from sqlalchemy import create_engine, text, table, MetaData, Table, Column, Integer, null
+from sqlalchemy import create_engine, text
 
 folder_dir = "WygenerowaneDane"
 files = os.listdir(folder_dir)
@@ -45,6 +45,7 @@ fakty_typy = {
     "Ilosc": INTEGER,
     "Rabat": DECIMAL(10,2)
 }
+print(fakty_df["Wartosc"].sum())
 
 produkty_df = pd.read_csv(f"{folder_dir}/{produkty}")
 

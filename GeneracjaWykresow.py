@@ -194,7 +194,7 @@ dni_tyg = ['Niedziela',
 'Sobota']
 
 
-def get_day_sales(conn, dni=(i for i in range(0, 7))):
+def get_day_sales(conn, dni=(0,1,2,3,4,5,6)):
     fig, ax = plt.subplots(figsize=(7, 7), layout='constrained', )
     wybrane_dni = []
     for i in range(len(dni_tyg)):
@@ -212,24 +212,99 @@ def get_day_sales(conn, dni=(i for i in range(0, 7))):
     for row in conn.execute(query):
         dni.append(row[0])
         values.append(row[1])
-    print(dni, values)
     ax.bar(dni, values)
     ax.set_title("Ilosc sprzedazy w dniach tygodnia")
     ax.set_ylabel('Ilosc sprzedazy')
     ax.set_xlabel("Dzien Tygodnia")
-    plt.savefig(f"{wykresy_dir}/Ilosc-Sprzedazy-Dni-Tygodnia")
+    if len(dni) == 7:
+        plt.savefig(f"{wykresy_dir}/Ilosc-Sprzedazy-Dni-Tygodnia")
+    else:
+        save_to = f"{wykresy_dir}/Ilosc-Sprzedazy-Dni"
+        for i in dni:
+            save_to += "-"+str(i)
+        plt.savefig(save_to)
+
+def get_day_income(conn, dni=(0,1,2,3,4,5,6)):
+    fig, ax = plt.subplots(figsize=(7, 7), layout='constrained')
+    wybrane_dni = []
+    for i in range(len(dni_tyg)):
+        if i in dni:
+            wybrane_dni.append(dni_tyg[i])
+    wybrane_dni = tuple(wybrane_dni)
+    query = text(f"""
+    SELECT d.DzienTygodnia, SUM(f.Wartosc)
+    FROM factsprzedaze f
+    JOIN dimdata d ON f.data_id = d.data_id WHERE d.DzienTygodnia IN {wybrane_dni}
+    GROUP BY d.DzienTygodnia;
+    """)
+    dni = []
+    values = []
+    for row in conn.execute(query):
+        dni.append(row[0])
+        values.append(row[1])
+    ax.bar(dni, values)
+    ax.set_title("Zysk w dniach tygodnia")
+    ax.set_ylabel('Ilosc sprzedazy')
+    ax.set_xlabel("Dzien Tygodnia")
+    if len(dni) == 7:
+        plt.savefig(f"{wykresy_dir}/Zyski-Dni-Tygodnia")
+    else:
+        save_to = f"{wykresy_dir}/Zyski-Sprzedazy-Dni"
+        for i in dni:
+            save_to += "-" + str(i)
+        plt.savefig(save_to)
+
+def most_sold_products(conn, amount=10):
+    fig, ax = plt.subplots(figsize=(10, 10), layout='constrained')
+    query = text(f"""
+    Select p.Nazwa_Produktu, Count(f.ilosc) FROM factsprzedaze f
+    JOIN dimprodukt p ON p.Produkt_ID = f.Produkt_ID
+    group by p.Nazwa_Produktu ORDER BY COUNT(f.ilosc) DESC
+    LIMIT {amount};""")
+    produkty = []
+    values = []
+    for row in conn.execute(query):
+        produkty.append(row[0])
+        values.append(row[1])
+    ax.barh(produkty, values)
+    ax.set_title(f"Najczesciej sprzedajace sie {amount} produktow")
+    ax.set_ylabel('Produkt')
+    ax.set_xlabel("Ilosc sprzedanych jednostek")
+    plt.savefig(f"{wykresy_dir}/{amount}-najczesciej-sprzedajace-sie-produkty")
+
+def highest_income_products(conn, amount=10):
+    fig, ax = plt.subplots(figsize=(10, 10), layout='constrained')
+    query = text(f"""
+    Select p.Nazwa_Produktu, SUM(f.wartosc) FROM factsprzedaze f
+    JOIN dimprodukt p ON p.Produkt_ID = f.Produkt_ID
+    group by p.Nazwa_Produktu ORDER BY SUM(f.wartosc) DESC
+    LIMIT {amount};""")
+    produkty = []
+    values = []
+    for row in conn.execute(query):
+        produkty.append(row[0])
+        values.append(row[1])
+    ax.barh(produkty, values)
+    ax.set_title(f"{amount} najbardziej dochodowych produktow")
+    ax.set_ylabel('Produkt')
+    ax.set_xlabel("Zysk")
+    plt.savefig(f"{wykresy_dir}/{amount}-najbardziej-dochodowych-produktow")
 
 
 
-
-with engine.connect() as conn:
-    get_payment_methods_chart(conn)
-    get_category_revenue_chart(conn)
-    get_discount_impact_chart(conn)
-    get_sales_with_discounts(conn)
-    get_store_revenue_chart(1, conn)
-    get_store_revenue_chart(1, conn)
-    get_product_revenue_charts(1, conn)
-    get_product_sold_charts(1, conn)
-    get_day_sales(conn)
+if __name__ == "__main__":
+    with engine.connect() as conn:
+        get_payment_methods_chart(conn)
+        get_category_revenue_chart(conn)
+        get_discount_impact_chart(conn)
+        get_sales_with_discounts(conn)
+        get_store_revenue_chart(1, conn)
+        get_product_revenue_charts(1, conn)
+        get_product_sold_charts(1, conn)
+        get_day_sales(conn)
+        get_day_sales(conn, dni=(1, 3))
+        get_day_income(conn)
+        get_day_income(conn, dni=(1, 3))
+        most_sold_products(conn, 15)
+        highest_income_products(conn, 15)
 

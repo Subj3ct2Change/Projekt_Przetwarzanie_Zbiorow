@@ -45,7 +45,6 @@ fakty_typy = {
     "Ilosc": INTEGER,
     "Rabat": DECIMAL(10,2)
 }
-print(fakty_df["Wartosc"].sum())
 
 produkty_df = pd.read_csv(f"{folder_dir}/{produkty}")
 
